@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="CodeJudge - solve coding problems and get instant verdicts" />
+<title>CodeJudge - Online Coding Judge</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Cpath d='M12 10l-5 6 5 6M20 10l5 6-5 6' fill='none' stroke='%23fff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+<style>
+:root{--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--border:#e2e8f0;--pri:#4f46e5;--pri-h:#4338ca;--ok:#16a34a;--bad:#dc2626;--warn:#d97706;--hover:#f1f5f9;--code:#f1f5f9;--shadow:0 1px 2px rgba(0,0,0,.06)}
+.dark{--bg:#020617;--card:#0f172a;--text:#e2e8f0;--muted:#94a3b8;--border:#1e293b;--hover:#1e293b;--code:#1e293b;--shadow:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{margin:0;letter-spacing:-.01em}
+.muted{color:var(--muted)}
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--card) 90%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+.bar{max-width:1280px;margin:0 auto;padding:0 16px;height:60px;display:flex;align-items:center;gap:20px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:18px}
+.logo i{width:30px;height:30px;border-radius:8px;background:var(--pri);color:#fff;display:grid;place-items:center;font-style:normal;font-size:14px}
+.logo b{color:var(--pri)}
+nav{display:flex;gap:4px;flex:1;overflow-x:auto}
+nav a{padding:7px 12px;border-radius:8px;color:var(--muted);font-weight:500;white-space:nowrap}
+nav a:hover{background:var(--hover)}
+nav a.on{background:color-mix(in srgb,var(--pri) 12%,transparent);color:var(--pri)}
+main{max-width:1280px;margin:0 auto;padding:24px 16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow)}
+.pad{padding:20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--border);background:var(--card);color:var(--text);padding:8px 14px;border-radius:8px;font:inherit;font-weight:500;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--hover)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}.btn.pri:hover{background:var(--pri-h)}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}.btn.ok:hover{filter:brightness(.92)}
+.btn.sm{padding:4px 10px;font-size:12px}
+input,select,textarea{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid color-mix(in srgb,var(--pri) 45%,transparent);border-color:var(--pri)}
+label{display:block;font-weight:500;margin:0 0 4px}
+.field{margin-bottom:14px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:10px 16px;border-bottom:1px solid var(--border)}
+td{padding:12px 16px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--hover)}
+.badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.Easy,.Accepted,.AC{background:#dcfce7;color:#15803d}.Medium{background:#fef3c7;color:#b45309}.Hard,.WA,.Wrong{background:#fee2e2;color:#b91c1c}
+.CE,.Compilation{background:#fef3c7;color:#b45309}.RE,.Runtime{background:#ffedd5;color:#c2410c}.TLE,.Time{background:#ede9fe;color:#6d28d9}.neutral{background:var(--code);color:var(--muted)}
+.dark .Easy,.dark .Accepted,.dark .AC{background:#14532d66;color:#4ade80}.dark .Medium,.dark .CE,.dark .Compilation{background:#78350f66;color:#fbbf24}.dark .Hard,.dark .WA,.dark .Wrong{background:#7f1d1d66;color:#f87171}.dark .RE,.dark .Runtime{background:#7c2d1266;color:#fb923c}.dark .TLE,.dark .Time{background:#4c1d9566;color:#a78bfa}
+pre{margin:0;background:var(--code);border-radius:8px;padding:10px 12px;font:12px/1.5 'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;overflow:auto;white-space:pre-wrap;word-break:break-word}
+pre.err{background:#fee2e2;color:#b91c1c}.dark pre.err{background:#7f1d1d44;color:#fca5a5}
+.grid{display:grid;gap:16px}
+.split{grid-template-columns:1fr 1fr}
+@media(max-width:900px){.split{grid-template-columns:1fr}}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spread{justify-content:space-between}
+.filters{display:grid;grid-template-columns:1fr 170px 170px;gap:10px}
+@media(max-width:700px){.filters{grid-template-columns:1fr}.hide-s{display:none}}
+.editor{height:420px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.editor textarea{height:100%;border:0;border-radius:0;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;resize:none}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:14px}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:8px 14px;font:inherit;font-weight:500;color:var(--muted);cursor:pointer}
+.tabs button.on{color:var(--pri);border-color:var(--pri)}
+.stmt h3{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:20px 0 6px}
+.stmt p{margin:0;white-space:pre-wrap}
+.toast{position:fixed;right:16px;top:72px;z-index:99;background:var(--text);color:var(--bg);padding:10px 16px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:in .2s}
+@keyframes in{from{opacity:0;transform:translateY(-6px)}}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50;display:grid;place-items:center;padding:16px}
+.modal .card{width:min(820px,100%);max-height:90vh;overflow:auto}
+.hero{text-align:center;padding:64px 0 40px}
+.hero h1{font-size:clamp(32px,6vw,56px);font-weight:800;line-height:1.1}
+.hero h1 span{color:var(--pri)}
+.feat{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.spin{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--pri);border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical-align:-3px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.stat{font-size:26px;font-weight:700}
+.center{max-width:420px;margin:40px auto}
+</style>
+</head>
+<body>
+<header><div class="bar" id="bar"></div></header>
+<main id="app"></main>
+
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js" onerror="window.__noMonaco=1"></script>
+<script>
+'use strict';
+/* ====================== helpers ====================== */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const store = {
+  get(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { toast('Browser storage is full'); } },
+};
+const fmtDate = (t) => new Date(t).toLocaleString(undefined, { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+function toast(msg) {
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), 3000);
+}
+
+/* ====================== data ====================== */
+const T = (input, output, hidden = true) => ({ input, output, hidden });
+const PROBLEMS = [
+  { id: 'sum', title: 'Sum of Two Numbers', difficulty: 'Easy', tags: ['math'],
+    description: 'Given two integers A and B, print their sum.', inputFormat: 'A single line with two integers A and B separated by space.', outputFormat: 'Print A + B.', constraints: '-10^9 ≤ A, B ≤ 10^9 (use 64-bit integers)',
+    tests: [T('2 3\n', '5\n', false), T('-5 10\n', '5\n', false), T('1000000000 1000000000\n', '2000000000\n'), T('0 0\n', '0\n'), T('-7 -8\n', '-15\n')] },
+  { id: 'evenodd', title: 'Even or Odd', difficulty: 'Easy', tags: ['math'],
+    description: 'Given an integer N, print "Even" if it is even, otherwise print "Odd".', inputFormat: 'A single integer N.', outputFormat: 'Print Even or Odd.', constraints: '-10^9 ≤ N ≤ 10^9',
+    tests: [T('4\n', 'Even\n', false), T('7\n', 'Odd\n', false), T('0\n', 'Even\n'), T('-3\n', 'Odd\n'), T('1000000000\n', 'Even\n')] },
+  { id: 'reverse', title: 'Reverse a String', difficulty: 'Easy', tags: ['strings'],
+    description: 'Given a string S (no spaces), print it reversed.', inputFormat: 'A single string S.', outputFormat: 'Print the reversed string.', constraints: '1 ≤ |S| ≤ 1000',
+    tests: [T('hello\n', 'olleh\n', false), T('abc\n', 'cba\n', false), T('a\n', 'a\n'), T('racecar\n', 'racecar\n'), T('OpenAI\n', 'IAnepO\n')] },
+  { id: 'factorial', title: 'Factorial', difficulty: 'Easy', tags: ['math', 'recursion'],
+    description: 'Given N, print N! (factorial of N).', inputFormat: 'A single integer N.', outputFormat: 'Print N!.', constraints: '0 ≤ N ≤ 15',
+    tests: [T('5\n', '120\n', false), T('0\n', '1\n', false), T('1\n', '1\n'), T('10\n', '3628800\n'), T('15\n', '1307674368000\n')] },
+  { id: 'palindrome', title: 'Palindrome Check', difficulty: 'Medium', tags: ['strings'],
+    description: 'Given a string S, print "YES" if it is a palindrome, otherwise "NO". The check is case-sensitive.', inputFormat: 'A single string S (no spaces).', outputFormat: 'Print YES or NO.', constraints: '1 ≤ |S| ≤ 10^5',
+    tests: [T('madam\n', 'YES\n', false), T('hello\n', 'NO\n', false), T('a\n', 'YES\n'), T('abba\n', 'YES\n'), T('Aba\n', 'NO\n')] },
+  { id: 'maxarray', title: 'Maximum in Array', difficulty: 'Medium', tags: ['arrays'],
+    description: 'Given an array of N integers, print the maximum element.', inputFormat: 'First line: N. Second line: N space-separated integers.', outputFormat: 'Print the maximum element.', constraints: '1 ≤ N ≤ 10^5, -10^9 ≤ a[i] ≤ 10^9',
+    tests: [T('5\n1 5 3 9 2\n', '9\n', false), T('3\n-1 -5 -3\n', '-1\n', false), T('1\n42\n', '42\n'), T('4\n7 7 7 7\n', '7\n'), T('6\n-10 0 10 20 -20 5\n', '20\n')] },
+];
+const POINTS = { Easy: 10, Medium: 20, Hard: 30 };
+
+const LANGS = [
+  { id: 'cpp', label: 'C++', monaco: 'cpp', j0: 54 },
+  { id: 'c', label: 'C', monaco: 'c', j0: 50 },
+  { id: 'java', label: 'Java', monaco: 'java', j0: 62 },
+  { id: 'python', label: 'Python', monaco: 'python' },
+  { id: 'javascript', label: 'JavaScript', monaco: 'javascript' },
+];
+const STARTER = {
+  cpp: '#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    \n    return 0;\n}\n',
+  c: '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}\n',
+  java: 'import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        \n    }\n}\n',
+  python: '# Read input with input() and print the answer\n',
+  javascript: "const lines = require('fs').readFileSync(0, 'utf8').split('\\n');\n// print the answer with console.log\n",
+};
+
+/* ====================== state ====================== */
+const users = () => store.get('cj_users', []);
+const subs = () => store.get('cj_subs', []);
+const settings = () => store.get('cj_settings', { judge0Url: 'https://ce.judge0.com', judge0Key: '' });
+const me = () => { const id = store.get('cj_session', null); return id ? users().find((u) => u.id === id) || null : null; };
+const solvedSet = (uid) => new Set(subs().filter((s) => s.userId === uid && s.verdict === 'Accepted').map((s) => s.problemId));
+
+async function hashPw(pw, salt) {
+  const data = new TextEncoder().encode(salt + pw);
+  if (window.crypto && crypto.subtle) {
+    const b = await crypto.subtle.digest('SHA-256', data);
+    return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, '0')).join('');
+  }
+  let h = 0; for (const c of salt + pw) h = (h * 31 + c.charCodeAt(0)) | 0; return 'x' + h;
+}
+
+/* ====================== theme ====================== */
+const isDark = () => document.documentElement.classList.contains('dark');
+function applyTheme(dark) {
+  document.documentElement.classList.toggle('dark', dark);
+  localStorage.setItem('cj_theme', dark ? 'dark' : 'light');
+  if (window.monaco) monaco.editor.setTheme(dark ? 'vs-dark' : 'vs');
+}
+applyTheme(localStorage.getItem('cj_theme') ? localStorage.getItem('cj_theme') === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches);
+
+/* ====================== execution engine ====================== */
+const TIME_LIMIT = 4000;
+const blobWorker = (fn) => new Worker(URL.createObjectURL(new Blob(['(' + fn.toString() + ')()'], { type: 'text/javascript' })));
+
+// --- JavaScript: runs in a throw-away Web Worker (killed on timeout) ---
+function jsWorkerMain() {
+  onmessage = (e) => {
+    const { code, stdin } = e.data;
+    let out = '', err = '';
+    const fmt = (a) => a.map((x) => { if (typeof x === 'string') return x; try { return typeof x === 'object' ? JSON.stringify(x) : String(x); } catch { return String(x); } }).join(' ');
+    const cons = { log: (...a) => { out += fmt(a) + '\n'; }, info: (...a) => { out += fmt(a) + '\n'; }, error: (...a) => { err += fmt(a) + '\n'; }, warn: (...a) => { err += fmt(a) + '\n'; } };
+    const lines = stdin.split('\n'); if (stdin.endsWith('\n')) lines.pop();
+    const fs = { readFileSync: () => stdin };
+    const rl = { createInterface() { const h = {}; const o = { on(ev, cb) { h[ev] = cb; return o; }, close() {} }; setTimeout(() => { if (h.line) lines.forEach((l) => h.line(l)); if (h.close) h.close(); }, 0); return o; } };
+    const req = (m) => { if (m === 'fs') return fs; if (m === 'readline') return rl; throw new Error('Cannot find module ' + m); };
+    const t0 = performance.now();
+    let status = 'OK';
+    try { new Function('require', 'console', 'process', code)(req, cons, { argv: [], stdin: {} }); }
+    catch (ex) { status = 'RE'; err += (ex && ex.stack) || String(ex); }
+    setTimeout(() => postMessage({ status, stdout: out, stderr: err, timeMs: Math.round(performance.now() - t0) }), 5);
+  };
+}
+function runJS(code, stdin) {
+  return new Promise((resolve) => {
+    const w = blobWorker(jsWorkerMain);
+    const timer = setTimeout(() => { w.terminate(); resolve({ status: 'TLE', stdout: '', stderr: 'Time limit exceeded (' + TIME_LIMIT / 1000 + 's)', timeMs: TIME_LIMIT }); }, TIME_LIMIT);
+    w.onmessage = (e) => { clearTimeout(timer); w.terminate(); resolve(e.data); };
+    w.onerror = (e) => { clearTimeout(timer); w.terminate(); resolve({ status: 'RE', stdout: '', stderr: e.message || 'Worker error', timeMs: 0 }); };
+    w.postMessage({ code, stdin });
+  });
+}
+
+// --- Python: Pyodide (WebAssembly) in a persistent worker; recreated after a timeout ---
+function pyWorkerMain() {
+  importScripts('https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js');
+  let py;
+  loadPyodide().then((p) => { py = p; postMessage({ ready: true }); }).catch((e) => postMessage({ fatal: String(e) }));
+  onmessage = async (e) => {
+    const { code, stdin } = e.data;
+    let out = '', err = '', status = 'OK';
+    const lines = stdin.split('\n'); if (stdin.endsWith('\n')) lines.pop();
+    let i = 0;
+    py.setStdin({ stdin: () => (i < lines.length ? lines[i++] : undefined) });
+    py.setStdout({ batched: (s) => { out += s + '\n'; } });
+    py.setStderr({ batched: (s) => { err += s + '\n'; } });
+    const t0 = performance.now();
+    const g = py.globals.get('dict')();
+    try { await py.runPythonAsync(code, { globals: g }); }
+    catch (ex) { status = 'RE'; err += String((ex && ex.message) || ex); }
+    try { g.destroy(); } catch {}
+    postMessage({ done: true, status, stdout: out, stderr: err, timeMs: Math.round(performance.now() - t0) });
+  };
+}
+let pyWorker = null, pyReady = null;
+function getPy() {
+  if (pyWorker) return pyWorker;
+  const w = pyWorker = blobWorker(pyWorkerMain);
+  pyReady = new Promise((res, rej) => {
+    const h = (e) => { if (e.data.ready) { w.removeEventListener('message', h); res(); } else if (e.data.fatal) rej(new Error(e.data.fatal)); };
+    w.addEventListener('message', h);
+    w.onerror = (e) => rej(new Error(e.message || 'failed to load'));
+  });
+  return w;
+}
+async function runPython(code, stdin) {
+  const w = getPy();
+  try { await pyReady; }
+  catch (e) { try { w.terminate(); } catch {} pyWorker = null; return { status: 'RE', stdout: '', stderr: 'Could not load the Python runtime (Pyodide). Check your internet connection.\n' + e.message, timeMs: 0 }; }
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => { w.terminate(); pyWorker = null; resolve({ status: 'TLE', stdout: '', stderr: 'Time limit exceeded (' + TIME_LIMIT / 1000 + 's)', timeMs: TIME_LIMIT }); }, TIME_LIMIT);
+    const h = (e) => { if (!e.data.done) return; clearTimeout(timer); w.removeEventListener('message', h); resolve(e.data); };
+    w.addEventListener('message', h);
+    w.postMessage({ code, stdin });
+  });
+}
+
+// --- C / C++ / Java: Judge0 (public instance by default, configurable in Settings) ---
+const b64 = (s) => btoa(unescape(encodeURIComponent(s)));
+const unb64 = (s) => { try { return s ? decodeURIComponent(escape(atob(s))) : ''; } catch { return ''; } };
+async function runJudge0(lang, code, stdin) {
+  const s = settings();
+  const base = (s.judge0Url || 'https://ce.judge0.com').replace(/\/+$/, '');
+  const headers = { 'Content-Type': 'application/json' };
+  if (s.judge0Key) { headers['X-RapidAPI-Key'] = s.judge0Key; try { headers['X-RapidAPI-Host'] = new URL(base).host; } catch {} }
+  try {
+    const r = await fetch(base + '/submissions?base64_encoded=true&wait=true&fields=stdout,stderr,compile_output,message,status,time', {
+      method: 'POST', headers,
+      body: JSON.stringify({ source_code: b64(code), language_id: LANGS.find((l) => l.id === lang).j0, stdin: b64(stdin), cpu_time_limit: TIME_LIMIT / 1000 }),
+    });
+    if (!r.ok) throw new Error(r.status === 429 ? 'Judge0 rate limit reached - wait a bit, or add your own key in Settings' : 'Judge0 responded with HTTP ' + r.status);
+    const d = await r.json(); const id = d.status.id; const timeMs = Math.round((parseFloat(d.time) || 0) * 1000);
+    if (id === 6) return { status: 'CE', stdout: '', stderr: unb64(d.compile_output) || 'Compilation failed', timeMs };
+    if (id === 5) return { status: 'TLE', stdout: unb64(d.stdout), stderr: 'Time limit exceeded', timeMs };
+    if (id >= 7) return { status: 'RE', stdout: unb64(d.stdout), stderr: unb64(d.stderr) || unb64(d.message) || d.status.description, timeMs };
+    return { status: 'OK', stdout: unb64(d.stdout), stderr: unb64(d.stderr), timeMs };
+  } catch (e) {
+    return { status: 'RE', stdout: '', stderr: 'Could not reach Judge0 for C/C++/Java: ' + e.message + '\nTip: Python and JavaScript always run in your browser.', timeMs: 0, infra: true };
+  }
+}
+const runCode = (lang, code, stdin) => (lang === 'javascript' ? runJS(code, stdin) : lang === 'python' ? runPython(code, stdin) : runJudge0(lang, code, stdin));
+const norm = (s) => String(s).replace(/\r/g, '').split('\n').map((l) => l.trimEnd()).join('\n').trim();
+
+/* ====================== editor wrapper ====================== */
+let editor = null;
+function disposeEditor() { if (editor && editor.dispose) editor.dispose(); editor = null; }
+function mountEditor(el, lang, value) {
+  const fallback = () => {
+    el.innerHTML = '<textarea spellcheck="false"></textarea>'; const ta = el.firstChild; ta.value = value;
+    ta.addEventListener('keydown', (e) => { if (e.key === 'Tab') { e.preventDefault(); const s = ta.selectionStart; ta.setRangeText('    ', s, ta.selectionEnd, 'end'); } });
+    editor = { get: () => ta.value, set: (v) => { ta.value = v; }, setLang() {}, onChange: (cb) => ta.addEventListener('input', cb), dispose() {} };
+  };
+  if (window.__noMonaco || !window.require || !window.require.config) return fallback();
+  require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
+  require(['vs/editor/editor.main'], () => {
+    if (!el.isConnected) return;
+    const m = monaco.editor.create(el, { value, language: LANGS.find((l) => l.id === lang).monaco, theme: isDark() ? 'vs-dark' : 'vs', automaticLayout: true, minimap: { enabled: false }, fontSize: 14, scrollBeyondLastLine: false, tabSize: 4, padding: { top: 10 } });
+    editor = { get: () => m.getValue(), set: (v) => m.setValue(v), setLang: (l) => monaco.editor.setModelLanguage(m.getModel(), LANGS.find((x) => x.id === l).monaco), onChange: (cb) => m.onDidChangeModelContent(cb), dispose: () => m.dispose() };
+    editor.onChange(() => window.__onCode && window.__onCode());
+  }, fallback);
+}
+
+/* ====================== router + layout ====================== */
+const app = $('#app');
+function layout() {
+  const u = me(); const h = location.hash || '#/';
+  const on = (p) => (h.startsWith(p) ? 'on' : '');
+  $('#bar').innerHTML = `
+    <a class="logo" href="#/"><i>&lt;/&gt;</i><span>Code<b>Judge</b></span></a>
+    <nav>
+      <a class="${on('#/problem')}" href="#/problems">Problems</a>
+      <a class="${on('#/submissions')}" href="#/submissions">Submissions</a>
+      <a class="${on('#/leaderboard')}" href="#/leaderboard">Leaderboard</a>
+      <a class="${on('#/profile')}" href="#/profile">Dashboard</a>
+      <a class="${on('#/settings')}" href="#/settings">Settings</a>
+    </nav>
+    <div class="row">
+      <button class="btn sm" id="themeBtn" title="Toggle theme">${isDark() ? '☀️' : '🌙'}</button>
+      ${u ? `<span class="muted hide-s">${esc(u.name)}</span><button class="btn sm" id="logoutBtn">Logout</button>`
+          : `<a class="btn sm" href="#/login">Login</a><a class="btn sm pri" href="#/register">Sign up</a>`}
+    </div>`;
+  $('#themeBtn').onclick = () => { applyTheme(!isDark()); layout(); };
+  const lo = $('#logoutBtn'); if (lo) lo.onclick = () => { store.set('cj_session', null); toast('Logged out'); location.hash = '#/'; route(); };
+}
+
+function route() {
+  disposeEditor(); window.__onCode = null;
+  layout(); window.scrollTo(0, 0);
+  const h = location.hash.replace(/^#/, '') || '/';
+  const [, page, arg] = h.split('/');
+  const views = { '': home, problems: problemsView, problem: () => problemView(arg), submissions: submissionsView, leaderboard: leaderboardView, profile: profileView, settings: settingsView, login: () => authView('login'), register: () => authView('register') };
+  (views[page || ''] || home)();
+}
+window.addEventListener('hashchange', route);
+
+/* ====================== views ====================== */
+function home() {
+  const u = me();
+  app.innerHTML = `
+    <section class="hero">
+      <span class="badge" style="background:color-mix(in srgb,var(--pri) 14%,transparent);color:var(--pri)">Practice · Compete · Improve</span>
+      <h1 style="margin:20px auto 0;max-width:760px">Sharpen your coding skills with <span>real problems</span></h1>
+      <p class="muted" style="max-width:600px;margin:16px auto 28px;font-size:17px">Write code in your browser, run it on custom input and get an instant verdict on hidden test cases.</p>
+      <div class="row" style="justify-content:center">
+        <a class="btn pri" style="padding:12px 24px" href="${u ? '#/problems' : '#/register'}">${u ? 'Browse problems' : 'Get started free'}</a>
+        ${u ? '' : '<a class="btn" style="padding:12px 24px" href="#/login">I have an account</a>'}
+      </div>
+    </section>
+    <section class="grid feat">
+      ${[['⚡', 'Instant verdicts', 'Accepted, Wrong Answer, Compilation Error, Runtime Error or Time Limit Exceeded.'],
+         ['🧑‍💻', '5 languages', 'C, C++, Java, Python and JavaScript with a VS Code-style editor.'],
+         ['🏆', 'Leaderboard', 'Earn 10 / 20 / 30 points for every new Easy / Medium / Hard problem solved.'],
+         ['📊', 'Track progress', 'Submission history, solved problems and difficulty breakdown.']]
+        .map(([i, t, d]) => `<div class="card pad"><div style="font-size:26px">${i}</div><h3 style="margin:8px 0 4px">${t}</h3><p class="muted" style="margin:0">${d}</p></div>`).join('')}
+    </section>`;
+}
+
+function authView(mode) {
+  if (me()) { location.hash = '#/problems'; return; }
+  const reg = mode === 'register';
+  app.innerHTML = `
+    <form class="card pad center" id="f">
+      <h2>${reg ? 'Create your account' : 'Welcome back'}</h2>
+      <p class="muted" style="margin:4px 0 20px">${reg ? 'Start solving problems in under a minute.' : 'Log in to submit solutions.'}</p>
+      ${reg ? '<div class="field"><label>Name</label><input id="name" required maxlength="40" autocomplete="name"></div>' : ''}
+      <div class="field"><label>Email</label><input id="email" type="email" required autocomplete="email"></div>
+      <div class="field"><label>Password</label><input id="pw" type="password" required minlength="6" autocomplete="${reg ? 'new-password' : 'current-password'}"></div>
+      <button class="btn pri" style="width:100%">${reg ? 'Sign up' : 'Login'}</button>
+      <p class="muted" style="text-align:center;margin:16px 0 0">${reg ? 'Already registered? <a href="#/login" style="color:var(--pri)">Login</a>' : 'New here? <a href="#/register" style="color:var(--pri)">Create an account</a>'}</p>
+      <p class="muted" style="font-size:12px;margin:14px 0 0">Accounts are stored only in this browser (demo mode).</p>
+    </form>`;
+  $('#f').onsubmit = async (e) => {
+    e.preventDefault();
+    const email = $('#email').value.trim().toLowerCase(), pw = $('#pw').value;
+    const list = users();
+    if (reg) {
+      if (pw.length < 6) return toast('Password must be at least 6 characters');
+      if (list.some((u) => u.email === email)) return toast('Email already registered');
+      const salt = crypto.getRandomValues(new Uint32Array(2)).join('');
+      const u = { id: 'u' + Date.now(), name: $('#name').value.trim(), email, salt, hash: await hashPw(pw, salt) };
+      store.set('cj_users', [...list, u]); store.set('cj_session', u.id); toast('Account created. Welcome, ' + u.name + '!');
+    } else {
+      const u = list.find((x) => x.email === email);
+      if (!u || (await hashPw(pw, u.salt)) !== u.hash) return toast('Invalid email or password');
+      store.set('cj_session', u.id); toast('Welcome back, ' + u.name + '!');
+    }
+    location.hash = '#/problems';
+  };
+}
+
+let pf = { q: '', d: '', t: '' };
+function problemsView() {
+  const u = me(); const solved = u ? solvedSet(u.id) : new Set();
+  const tags = [...new Set(PROBLEMS.flatMap((p) => p.tags))].sort();
+  app.innerHTML = `
+    <h1>Problems</h1><p class="muted" style="margin:2px 0 16px" id="count"></p>
+    <div class="card pad filters" style="margin-bottom:16px">
+      <input id="q" placeholder="Search by title…" value="${esc(pf.q)}">
+      <select id="d"><option value="">All difficulties</option>${['Easy', 'Medium', 'Hard'].map((x) => `<option ${pf.d === x ? 'selected' : ''}>${x}</option>`).join('')}</select>
+      <select id="t"><option value="">All tags</option>${tags.map((x) => `<option ${pf.t === x ? 'selected' : ''}>${x}</option>`).join('')}</select>
+    </div>
+    <div class="card" style="overflow-x:auto"><table><thead><tr><th style="width:60px">Status</th><th>Title</th><th>Difficulty</th><th class="hide-s">Tags</th></tr></thead><tbody id="rows"></tbody></table></div>`;
+  const draw = () => {
+    const list = PROBLEMS.filter((p) => p.title.toLowerCase().includes(pf.q.toLowerCase()) && (!pf.d || p.difficulty === pf.d) && (!pf.t || p.tags.includes(pf.t)));
+    $('#count').textContent = list.length + ' problems' + (u ? ` · ${[...solved].length} solved` : '');
+    $('#rows').innerHTML = list.length ? list.map((p) => `<tr><td>${solved.has(p.id) ? '<span style="color:var(--ok)">✔</span>' : ''}</td><td><a href="#/problem/${p.id}" style="font-weight:600">${esc(p.title)}</a></td><td><span class="badge ${p.difficulty}">${p.difficulty}</span></td><td class="hide-s muted">${p.tags.join(', ')}</td></tr>`).join('') : '<tr><td colspan="4" class="muted" style="text-align:center;padding:32px">No problems match your filters.</td></tr>';
+  };
+  $('#q').oninput = (e) => { pf.q = e.target.value; draw(); };
+  $('#d').onchange = (e) => { pf.d = e.target.value; draw(); };
+  $('#t').onchange = (e) => { pf.t = e.target.value; draw(); };
+  draw();
+}
+
+const verdictName = { AC: 'Accepted', WA: 'Wrong Answer', CE: 'Compilation Error', RE: 'Runtime Error', TLE: 'Time Limit Exceeded' };
+const vClass = (v) => v.split(' ')[0];
+const vBadge = (v) => `<span class="badge ${vClass(v)}">${esc(v)}</span>`;
+
+function problemView(id) {
+  const p = PROBLEMS.find((x) => x.id === id);
+  if (!p) { app.innerHTML = '<p class="muted">Problem not found. <a href="#/problems" style="color:var(--pri)">Back to problems</a></p>'; return; }
+  const u = me(); let lang = localStorage.getItem('cj_lang') || 'cpp';
+  const key = (l) => `cj_code_${p.id}_${l}`;
+  const sample = p.tests.filter((t) => !t.hidden);
+  let busy = false, tab = 'desc';
+
+  app.innerHTML = `
+    <a href="#/problems" class="muted">← Back to problems</a>
+    <div class="grid split" style="margin-top:12px;align-items:start">
+      <div class="card pad" style="min-height:420px">
+        <div class="tabs"><button data-t="desc" class="on">Description</button><button data-t="hist">My submissions</button></div>
+        <div id="left"></div>
+      </div>
+      <div class="grid">
+        <div class="card pad">
+          <div class="row spread" style="margin-bottom:10px">
+            <div class="row"><select id="lang" style="width:auto">${LANGS.map((l) => `<option value="${l.id}" ${l.id === lang ? 'selected' : ''}>${l.label}</option>`).join('')}</select><button class="btn sm" id="reset" title="Reset to starter code">↺ Reset</button></div>
+            <div class="row"><button class="btn" id="run">▶ Run</button><button class="btn ok" id="submit">Submit</button></div>
+          </div>
+          <div class="editor" id="ed"></div>
+        </div>
+        <div class="card pad">
+          <div class="tabs"><button data-b="in" class="on">Custom input</button><button data-b="out">Result</button></div>
+          <textarea id="stdin" rows="5" style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px">${esc(sample[0] ? sample[0].input : '')}</textarea>
+          <div id="out" style="display:none"></div>
+        </div>
+      </div>
+    </div>`;
+
+  const left = $('#left');
+  const drawLeft = () => {
+    if (tab === 'desc') {
+      left.innerHTML = `<div class="stmt">
+        <div class="row"><h2>${esc(p.title)}</h2><span class="badge ${p.difficulty}">${p.difficulty}</span>${u && solvedSet(u.id).has(p.id) ? '<span class="badge Accepted">✔ Solved</span>' : ''}</div>
+        <p class="muted" style="margin-top:6px">${p.tags.map(esc).join(' · ')}</p>
+        <h3>Description</h3><p>${esc(p.description)}</p>
+        <h3>Input format</h3><p>${esc(p.inputFormat)}</p>
+        <h3>Output format</h3><p>${esc(p.outputFormat)}</p>
+        <h3>Constraints</h3><p>${esc(p.constraints)}</p>
+        <h3>Examples</h3>
+        ${sample.map((t, i) => `<div class="grid" style="grid-template-columns:1fr 1fr;margin-bottom:12px"><div><div class="muted" style="font-size:12px">Input #${i + 1}</div><pre>${esc(t.input)}</pre></div><div><div class="muted" style="font-size:12px">Output</div><pre>${esc(t.output)}</pre></div></div>`).join('')}
+        <p class="muted" style="font-size:12px">Read from standard input, write to standard output. Java: class must be named <code>Main</code>.</p></div>`;
+    } else {
+      const mine = u ? subs().filter((s) => s.userId === u.id && s.problemId === p.id).reverse() : [];
+      left.innerHTML = !u ? '<p class="muted">Log in to see your submissions.</p>' : !mine.length ? '<p class="muted">No submissions yet for this problem.</p>'
+        : mine.map((s) => `<div class="row spread" style="padding:10px 0;border-bottom:1px solid var(--border)"><div>${vBadge(s.verdict)} <span class="muted" style="font-size:12px">${s.passed}/${s.total} · ${esc(s.language)}</span><div class="muted" style="font-size:12px">${fmtDate(s.ts)}</div></div><button class="btn sm" data-view="${s.id}">View code</button></div>`).join('');
+      left.querySelectorAll('[data-view]').forEach((b) => (b.onclick = () => showCode(subs().find((s) => s.id === b.dataset.view))));
+    }
+  };
+  document.querySelectorAll('[data-t]').forEach((b) => (b.onclick = () => { tab = b.dataset.t; document.querySelectorAll('[data-t]').forEach((x) => x.classList.toggle('on', x === b)); drawLeft(); }));
+  drawLeft();
+
+  const showBottom = (w) => { document.querySelectorAll('[data-b]').forEach((x) => x.classList.toggle('on', x.dataset.b === w)); $('#stdin').style.display = w === 'in' ? '' : 'none'; $('#out').style.display = w === 'out' ? '' : 'none'; };
+  document.querySelectorAll('[data-b]').forEach((b) => (b.onclick = () => showBottom(b.dataset.b)));
+  const out = (html) => { $('#out').innerHTML = html; showBottom('out'); };
+  const setBusy = (v) => { busy = v; ['run', 'submit'].forEach((i) => ($('#' + i).disabled = v)); };
+  const loadingMsg = (m) => out(`<p class="muted"><span class="spin"></span>${m}</p>`);
+  const first = () => (lang === 'python' && !pyWorker ? ' (first Python run downloads the runtime, ~10 MB)' : '');
+
+  // editor
+  const initial = localStorage.getItem(key(lang)) ?? STARTER[lang];
+  mountEditor($('#ed'), lang, initial);
+  window.__onCode = () => { if (editor) localStorage.setItem(key(lang), editor.get()); };
+  const waitEditor = async () => { for (let i = 0; i < 100 && !editor; i++) await new Promise((r) => setTimeout(r, 100)); return editor; };
+  const textareaSave = setInterval(() => { if (!document.body.contains($('#ed'))) return clearInterval(textareaSave); if (editor && !window.monaco) localStorage.setItem(key(lang), editor.get()); }, 1500);
+
+  $('#lang').onchange = (e) => {
+    if (editor) localStorage.setItem(key(lang), editor.get());
+    lang = e.target.value; localStorage.setItem('cj_lang', lang);
+    editor.setLang(lang); editor.set(localStorage.getItem(key(lang)) ?? STARTER[lang]);
+  };
+  $('#reset').onclick = () => { if (confirm('Reset your code to the starter template?')) { editor.set(STARTER[lang]); localStorage.setItem(key(lang), STARTER[lang]); } };
+
+  $('#run').onclick = async () => {
+    const ed = await waitEditor(); const code = ed.get();
+    if (!code.trim()) return toast('Write some code first');
+    setBusy(true); loadingMsg('Running…' + first());
+    const r = await runCode(lang, code, $('#stdin').value);
+    setBusy(false);
+    const bad = r.status !== 'OK';
+    out(`<div class="row" style="margin-bottom:10px">${bad ? vBadge(verdictName[r.status] || r.status) : '<span class="badge Accepted">Executed successfully</span>'}<span class="muted" style="font-size:12px">⏱ ${r.timeMs} ms</span></div>
+      ${r.stderr ? `<div class="muted" style="font-size:12px">${r.status === 'CE' ? 'Compilation error' : 'stderr'}</div><pre class="err" style="margin-bottom:10px">${esc(r.stderr)}</pre>` : ''}
+      <div class="muted" style="font-size:12px">Output</div><pre>${esc(r.stdout) || '<span class="muted">(no output)</span>'}</pre>`);
+  };
+
+  $('#submit').onclick = async () => {
+    if (!u) { toast('Please log in to submit'); location.hash = '#/login'; return; }
+    const ed = await waitEditor(); const code = ed.get();
+    if (!code.trim()) return toast('Write some code first');
+    setBusy(true);
+    const results = []; let verdict = 'Accepted', error = '', passed = 0, failCase = null;
+    for (let i = 0; i < p.tests.length; i++) {
+      loadingMsg(`Judging test ${i + 1} / ${p.tests.length}…` + (i === 0 ? first() : ''));
+      const t = p.tests[i]; const r = await runCode(lang, code, t.input);
+      let st = 'AC';
+      if (r.status === 'CE') st = 'CE'; else if (r.status === 'TLE') st = 'TLE'; else if (r.status === 'RE') st = 'RE'; else if (norm(r.stdout) !== norm(t.output)) st = 'WA';
+      results.push({ st, timeMs: r.timeMs });
+      if (st === 'AC') passed++;
+      else if (verdict === 'Accepted') { verdict = verdictName[st]; error = (r.stderr || '').slice(0, 2000); failCase = { i, t, got: r.stdout }; }
+      if (st === 'CE' || r.infra) break;
+    }
+    const total = p.tests.length;
+    const sub = { id: 's' + Date.now(), userId: u.id, problemId: p.id, language: lang, code, verdict, passed, total, error, ts: Date.now() };
+    if (!results.some((r) => r.st === 'CE') && !(results[results.length - 1] && error.startsWith('Could not reach Judge0'))) store.set('cj_subs', [...subs(), sub]);
+    setBusy(false);
+    const firstSolve = verdict === 'Accepted' && subs().filter((s) => s.userId === u.id && s.problemId === p.id && s.verdict === 'Accepted').length === 1;
+    out(`<div class="row" style="margin-bottom:10px">${vBadge(verdict)}<b>${passed}/${total} test cases passed</b></div>
+      ${firstSolve ? `<p style="background:#dcfce7;color:#15803d;padding:10px;border-radius:8px;margin:0 0 10px">🎉 Problem solved! +${POINTS[p.difficulty]} points</p>` : ''}
+      <div class="row" style="margin-bottom:10px">${results.map((r, i) => `<span class="badge ${r.st}" title="${r.timeMs} ms">#${i + 1} ${r.st}</span>`).join('')}</div>
+      ${error ? `<pre class="err" style="margin-bottom:10px">${esc(error)}</pre>` : ''}
+      ${failCase && !failCase.t.hidden ? `<div class="grid" style="grid-template-columns:repeat(3,1fr)"><div><div class="muted" style="font-size:12px">Input</div><pre>${esc(failCase.t.input)}</pre></div><div><div class="muted" style="font-size:12px">Expected</div><pre>${esc(failCase.t.output)}</pre></div><div><div class="muted" style="font-size:12px">Your output</div><pre>${esc(failCase.got) || '(empty)'}</pre></div></div>` : failCase ? `<p class="muted">Failed on hidden test case #${failCase.i + 1}.</p>` : ''}`);
+    toast(verdict);
+    drawLeft();
+  };
+}
+
+function showCode(s) {
+  if (!s) return;
+  const p = PROBLEMS.find((x) => x.id === s.problemId);
+  const m = document.createElement('div'); m.className = 'modal';
+  m.innerHTML = `<div class="card pad"><div class="row spread" style="margin-bottom:12px"><div class="row"><h3>${esc(p ? p.title : s.problemId)}</h3>${vBadge(s.verdict)}<span class="muted">${s.passed}/${s.total} · ${esc(s.language)} · ${fmtDate(s.ts)}</span></div><div class="row"><button class="btn sm" id="cp">Copy</button><button class="btn sm" id="cl">Close</button></div></div>${s.error ? `<pre class="err" style="margin-bottom:10px">${esc(s.error)}</pre>` : ''}<pre style="max-height:50vh">${esc(s.code)}</pre></div>`;
+  document.body.appendChild(m);
+  m.onclick = (e) => { if (e.target === m) m.remove(); };
+  $('#cl', m).onclick = () => m.remove();
+  $('#cp', m).onclick = () => navigator.clipboard.writeText(s.code).then(() => toast('Code copied'), () => toast('Could not copy'));
+}
+
+function needLogin() { app.innerHTML = '<div class="card pad center" style="text-align:center"><h2>Please log in</h2><p class="muted">You need an account to see this page.</p><a class="btn pri" href="#/login">Login</a></div>'; }
+
+function submissionsView() {
+  const u = me(); if (!u) return needLogin();
+  let vf = '';
+  app.innerHTML = `<div class="row spread" style="margin-bottom:16px"><div><h1>Submission history</h1><p class="muted" style="margin:2px 0 0" id="cnt"></p></div><select id="vf" style="width:auto"><option value="">All verdicts</option>${Object.values(verdictName).map((v) => `<option>${v}</option>`).join('')}</select></div><div class="card" style="overflow-x:auto"><table><thead><tr><th>Problem</th><th>Verdict</th><th>Language</th><th class="hide-s">Tests</th><th class="hide-s">When</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>`;
+  const draw = () => {
+    const list = subs().filter((s) => s.userId === u.id && (!vf || s.verdict === vf)).reverse();
+    $('#cnt').textContent = list.length + ' submissions';
+    $('#rows').innerHTML = list.length ? list.map((s) => { const p = PROBLEMS.find((x) => x.id === s.problemId); return `<tr><td><a href="#/problem/${s.problemId}" style="font-weight:600">${esc(p ? p.title : s.problemId)}</a></td><td>${vBadge(s.verdict)}</td><td>${esc(s.language)}</td><td class="hide-s">${s.passed}/${s.total}</td><td class="hide-s muted">${fmtDate(s.ts)}</td><td style="text-align:right"><button class="btn sm" data-v="${s.id}">Details</button></td></tr>`; }).join('') : '<tr><td colspan="6" class="muted" style="text-align:center;padding:32px">No submissions yet. <a href="#/problems" style="color:var(--pri)">Solve a problem</a></td></tr>';
+    document.querySelectorAll('[data-v]').forEach((b) => (b.onclick = () => showCode(subs().find((s) => s.id === b.dataset.v))));
+  };
+  $('#vf').onchange = (e) => { vf = e.target.value; draw(); }; draw();
+}
+
+function board() {
+  const all = subs();
+  return users().map((u) => {
+    const ids = [...new Set(all.filter((s) => s.userId === u.id && s.verdict === 'Accepted').map((s) => s.problemId))];
+    const score = ids.reduce((a, id) => a + (POINTS[(PROBLEMS.find((p) => p.id === id) || {}).difficulty] || 0), 0);
+    return { id: u.id, name: u.name, solved: ids.length, score };
+  }).sort((a, b) => b.score - a.score || b.solved - a.solved || a.name.localeCompare(b.name)).map((r, i) => ({ ...r, rank: i + 1 }));
+}
+function leaderboardView() {
+  const u = me(); const rows = board();
+  app.innerHTML = `<div style="max-width:720px;margin:0 auto"><h1>Leaderboard</h1><p class="muted" style="margin:2px 0 16px">Easy 10 · Medium 20 · Hard 30 points per problem solved. Ranks are for accounts on this browser.</p><div class="card"><table><thead><tr><th style="width:70px">Rank</th><th>Username</th><th style="text-align:right">Solved</th><th style="text-align:right">Score</th></tr></thead><tbody>${rows.length ? rows.map((r) => `<tr style="${u && u.id === r.id ? 'background:color-mix(in srgb,var(--pri) 10%,transparent)' : ''}"><td style="font-size:16px;font-weight:700">${{ 1: '🥇', 2: '🥈', 3: '🥉' }[r.rank] || r.rank}</td><td style="font-weight:600">${esc(r.name)}${u && u.id === r.id ? ' <span class="badge neutral">You</span>' : ''}</td><td style="text-align:right">${r.solved}</td><td style="text-align:right;font-weight:700">${r.score}</td></tr>`).join('') : '<tr><td colspan="4" class="muted" style="text-align:center;padding:32px">No users yet.</td></tr>'}</tbody></table></div></div>`;
+}
+
+function profileView() {
+  const u = me(); if (!u) return needLogin();
+  const mine = subs().filter((s) => s.userId === u.id); const solved = solvedSet(u.id);
+  const acc = mine.length ? Math.round((mine.filter((s) => s.verdict === 'Accepted').length / mine.length) * 100) : 0;
+  const rank = board().find((r) => r.id === u.id) || { rank: '-', score: 0 };
+  const by = ['Easy', 'Medium', 'Hard'].map((d) => { const tot = PROBLEMS.filter((p) => p.difficulty === d); return { d, tot: tot.length, sol: tot.filter((p) => solved.has(p.id)).length }; });
+  const verdicts = {}; mine.forEach((s) => (verdicts[s.verdict] = (verdicts[s.verdict] || 0) + 1));
+  const days = [...Array(14)].map((_, i) => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - (13 - i)); const n = new Date(d); n.setDate(n.getDate() + 1); const l = mine.filter((s) => s.ts >= d && s.ts < n); return { label: (d.getMonth() + 1) + '/' + d.getDate(), n: l.length, ok: l.filter((s) => s.verdict === 'Accepted').length }; });
+  const max = Math.max(1, ...days.map((d) => d.n));
+  app.innerHTML = `
+    <h1>Hi, ${esc(u.name)} 👋</h1><p class="muted" style="margin:2px 0 16px">${esc(u.email)}</p>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))">
+      ${[['Solved', solved.size + ' / ' + PROBLEMS.length], ['Submissions', mine.length], ['Acceptance', acc + '%'], ['Score · Rank', rank.score + ' pts · #' + rank.rank]].map(([l, v]) => `<div class="card pad"><div class="muted">${l}</div><div class="stat">${v}</div></div>`).join('')}
+    </div>
+    <div class="grid split" style="margin-top:16px">
+      <div class="card pad"><h3 style="margin-bottom:14px">Activity · last 14 days</h3>
+        <div style="display:flex;align-items:flex-end;gap:6px;height:150px">${days.map((d) => `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%" title="${d.label}: ${d.n} submissions, ${d.ok} accepted"><div style="width:100%;height:${(d.n / max) * 100}%;min-height:${d.n ? 3 : 0}px;background:var(--pri);border-radius:4px 4px 0 0;opacity:.85"></div><span class="muted" style="font-size:9px;margin-top:4px">${d.label}</span></div>`).join('')}</div></div>
+      <div class="card pad"><h3 style="margin-bottom:14px">Problems by difficulty</h3>
+        ${by.map((x) => `<div style="margin-bottom:14px"><div class="row spread"><b>${x.d}</b><span class="muted">${x.sol} / ${x.tot}</span></div><div style="height:8px;border-radius:99px;background:var(--code);overflow:hidden;margin-top:4px"><div style="height:100%;width:${x.tot ? (x.sol / x.tot) * 100 : 0}%;background:${{ Easy: 'var(--ok)', Medium: 'var(--warn)', Hard: 'var(--bad)' }[x.d]}"></div></div></div>`).join('')}
+        <h3 style="margin:18px 0 8px">Verdicts</h3><div class="row">${Object.keys(verdicts).length ? Object.entries(verdicts).map(([v, n]) => `${vBadge(v)} <span class="muted">×${n}</span>`).join(' ') : '<span class="muted">No submissions yet</span>'}</div></div>
+    </div>`;
+}
+
+function settingsView() {
+  const s = settings();
+  app.innerHTML = `<div style="max-width:640px;margin:0 auto" class="grid">
+    <div class="card pad"><h2>Judge0 (C, C++, Java)</h2><p class="muted" style="margin:4px 0 16px">Python and JavaScript run inside your browser. C, C++ and Java are compiled by a Judge0 server. The public instance is used by default; you can point to your own or a RapidAPI one.</p>
+      <div class="field"><label>Judge0 URL</label><input id="u" value="${esc(s.judge0Url)}" placeholder="https://ce.judge0.com"></div>
+      <div class="field"><label>RapidAPI key (optional)</label><input id="k" type="password" value="${esc(s.judge0Key)}" placeholder="leave empty for the public / self-hosted instance"></div>
+      <div class="row"><button class="btn pri" id="save">Save</button><button class="btn" id="test">Test connection</button><span id="res" class="muted"></span></div></div>
+    <div class="card pad"><h2>Data</h2><p class="muted" style="margin:4px 0 12px">Accounts, submissions and saved code live in this browser's local storage.</p><button class="btn" id="wipe" style="color:var(--bad)">Delete all local data</button></div></div>`;
+  const get = () => ({ judge0Url: $('#u').value.trim() || 'https://ce.judge0.com', judge0Key: $('#k').value.trim() });
+  $('#save').onclick = () => { store.set('cj_settings', get()); toast('Settings saved'); };
+  $('#test').onclick = async () => { store.set('cj_settings', get()); $('#res').textContent = 'Testing…'; const r = await runJudge0('python' === 'x' ? 'cpp' : 'cpp', '#include <iostream>\nint main(){std::cout<<"ok";}', ''); $('#res').textContent = r.status === 'OK' && r.stdout.trim() === 'ok' ? '✔ Connected' : '✘ ' + (r.stderr || r.status).split('\n')[0]; };
+  $('#wipe').onclick = () => { if (confirm('Delete every account, submission and saved code in this browser?')) { Object.keys(localStorage).filter((k) => k.startsWith('cj_') && k !== 'cj_theme').forEach((k) => localStorage.removeItem(k)); toast('All data deleted'); location.hash = '#/'; route(); } };
+}
+
+route();
+</script>
+</body>
+</html>
